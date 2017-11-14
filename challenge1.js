@@ -11,7 +11,8 @@ const hexToBase64 = hex => {
   return Buffer.from(hex, 'hex').toString('base64');
 }
 
-//console.log(hexToBase64(CHALLENGE1_HEX));
+console.log("------ Challenge1 ------");
+console.log(hexToBase64(CHALLENGE1_HEX));
 
 /*
 * Challenge 2
@@ -35,7 +36,8 @@ const xor = (a, b) => {
  return Buffer.from(res,"hex").toString("utf-8");
 }
 
-//console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
+console.log("\n------ Challenge2 ------");
+console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
 
 /*
 * Challenge 3
@@ -85,8 +87,8 @@ const decrypt = hex => {
   }
   return highest;
 }
-
-//console.log(decrypt(CHALLENGE3_HEX));
+console.log("\n------ Challenge3 ------");
+console.log(decrypt(CHALLENGE3_HEX));
 
 /*
  Challenge 4
@@ -110,7 +112,8 @@ const decryptFile = filePath =>{
   return possibleSolution;
 }
 
-//console.log(decryptFile('./files/4.txt'));
+console.log("\n------ Challenge4 ------");
+console.log(decryptFile('./files/4.txt'));
 
 /*
   Challenge 5
@@ -133,7 +136,8 @@ const encryptWithKey = (text, key) => {
   return Buffer.from(res).toString("hex");
 }
 
-//console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE_5_KEY));
+console.log("\n------ Challenge5 ------");
+console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE5_KEY));
 
 /*
 * Challenge 7
@@ -158,5 +162,5 @@ const decryptFileWithAES = (filePath,key) => {
   
 	return buf.toString('utf-8');
 };
-
+console.log("\n------ Challenge7 ------");
 console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
