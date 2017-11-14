@@ -1,13 +1,19 @@
 const fs = require('fs');
-// Challenge 1
+
+/* 
+* Challenge 1
+*/
 const CHALLENGE1_HEX = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
 const hexToBase64 = hex => {
   return Buffer.from(hex, 'hex').toString('base64');
 }
+
 //console.log(hexToBase64(CHALLENGE1_HEX));
 
-//Challenge 2
+/*
+* Challenge 2
+*/
 const CHALLENGE2_HEX1 = "1c0111001f010100061a024b53535009181c";
 const CHALLENGE2_HEX2 = "686974207468652062756c6c277320657965";
 
@@ -29,7 +35,9 @@ const xor = (a, b) => {
 
 //console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
 
-//Challenge 3
+/*
+* Challenge 3
+*/
 const CHALLENGE3_HEX = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
 
 const calculateScore = string => {
@@ -78,10 +86,14 @@ const decrypt = hex => {
 
 //console.log(decrypt(CHALLENGE3_HEX));
 
-//Challenge 4
+/*
+ Challenge 4
+*/
 const decryptFile = filePath =>{
   const fileContent = fs.readFileSync(filePath,'utf-8');
+  //split each line into array
   const fileContentAry = fileContent.split('\n');
+  //store the possible solution
   let bestScore = 0;
   let possibleSolution = {}
 
@@ -96,5 +108,27 @@ const decryptFile = filePath =>{
   return possibleSolution;
 }
 
-console.log(decryptFile('./4.txt'));
+//console.log(decryptFile('./4.txt'));
 
+/*
+  Challenge 5
+*/
+
+const CHALLENGE5_TEXT1 = "Burning 'em, if you ain't quick and nimble I go crazy when I hear a cymbal";
+const KEY = "ICE";
+
+function keyCharAt(key, i) {
+  return key.charCodeAt( Math.floor(i % key.length) );
+}
+
+const encryptWithKey = (text, key) => {
+  let res = [];
+  const hexedText = Buffer.from(text);
+
+  for (var i = 0; i < hexedText.length; i++) {
+    res.push(hexedText[i] ^ keyCharAt(key,i));
+  }
+  return Buffer.from(res).toString("hex");
+}
+
+//console.log(encryptWithKey(CHALLENGE5_TEXT1, KEY));
