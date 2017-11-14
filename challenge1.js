@@ -11,8 +11,8 @@ const hexToBase64 = hex => {
   return Buffer.from(hex, 'hex').toString('base64');
 }
 
-console.log("------ Challenge1 ------");
-console.log(hexToBase64(CHALLENGE1_HEX));
+//console.log("------ Challenge1 ------");
+//console.log(hexToBase64(CHALLENGE1_HEX));
 
 /*
 * Challenge 2
@@ -36,8 +36,8 @@ const xor = (a, b) => {
  return Buffer.from(res,"hex").toString("utf-8");
 }
 
-console.log("\n------ Challenge2 ------");
-console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
+//console.log("\n------ Challenge2 ------");
+//console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
 
 /*
 * Challenge 3
@@ -87,8 +87,8 @@ const decrypt = hex => {
   }
   return highest;
 }
-console.log("\n------ Challenge3 ------");
-console.log(decrypt(CHALLENGE3_HEX));
+//console.log("\n------ Challenge3 ------");
+//console.log(decrypt(CHALLENGE3_HEX));
 
 /*
  Challenge 4
@@ -112,8 +112,8 @@ const decryptFile = filePath =>{
   return possibleSolution;
 }
 
-console.log("\n------ Challenge4 ------");
-console.log(decryptFile('./files/4.txt'));
+//console.log("\n------ Challenge4 ------");
+//console.log(decryptFile('./files/4.txt'));
 
 /*
   Challenge 5
@@ -136,8 +136,8 @@ const encryptWithKey = (text, key) => {
   return Buffer.from(res).toString("hex");
 }
 
-console.log("\n------ Challenge5 ------");
-console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE5_KEY));
+//console.log("\n------ Challenge5 ------");
+//console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE5_KEY));
 
 /*
 * Challenge 7
@@ -162,5 +162,44 @@ const decryptFileWithAES = (filePath,key) => {
   
 	return buf.toString('utf-8');
 };
-console.log("\n------ Challenge7 ------");
-console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
+//console.log("\n------ Challenge7 ------");
+// console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
+
+/*
+    Challenge 8
+*/
+
+//It is done but need a lot of refactoring!!
+const detectAESinECB = filePath => {
+  const ciphers = fs.readFileSync(filePath,'utf-8');
+  cipherArray = ciphers.split("\n").map(line => {
+    return Buffer.from(line);
+  });
+
+  const size = 16;
+  let sameBlockNumAry = []
+  cipherArray.forEach((cipher,textNum) => {
+    //16 文字ごとに分ける
+    let blocks = [];
+    const numOfBlocks = Math.ceil(cipher.length / size);
+    for(i = 0; i < numOfBlocks; i++){
+      blocks.push(cipher.slice(i*size, size*(i+1)));
+    }
+
+    //Blockごとに同じものがあるか検証する
+    let sameBlockNum = 0;
+    blocks.forEach((block, index) =>{
+      for(i = 0; i < blocks.length; i ++){
+        if(index == i) continue;
+        if (Buffer.compare(block, blocks[i]) == 0) {
+          sameBlockNum++;
+        }
+      }
+    });
+    if(sameBlockNum > 0) sameBlockNumAry.push({sameBlockNum:sameBlockNum, line:textNum, sentence:Buffer.from(cipher).toString()});
+  });
+  return sameBlockNumAry;
+}
+
+console.log("\n------ Challenge8 ------");
+console.log(detectAESinECB('./files/8.txt'));
