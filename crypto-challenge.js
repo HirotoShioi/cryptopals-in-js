@@ -2,7 +2,7 @@
 const CHALLENGE1_HEX = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
 const hexToBase64 = hex => {
-  return new Buffer(hex, 'hex').toString('base64');
+  return Buffer.from(hex, 'hex').toString('base64');
 }
 //console.log(hexToBase64(CHALLENGE1_HEX));
 
@@ -11,8 +11,8 @@ const CHALLENGE2_HEX1 = "1c0111001f010100061a024b53535009181c";
 const CHALLENGE2_HEX2 = "686974207468652062756c6c277320657965";
 
 const xor = (a, b) => {
-  if (!Buffer.isBuffer(a)) a = new Buffer(a,"hex");
-  if (!Buffer.isBuffer(b)) b = new Buffer(b,"hex");
+  if (!Buffer.isBuffer(a)) a = Buffer.from(a,"hex");
+  if (!Buffer.isBuffer(b)) b = Buffer.from(b,"hex");
   var res = []
   if (a.length > b.length) {
     for (var i = 0; i < b.length; i++) {
@@ -23,7 +23,7 @@ const xor = (a, b) => {
    res.push(a[i] ^ b[i])
    }
  }
- return new Buffer(res).toString("utf-8");
+ return Buffer.from(res).toString("utf-8");
 }
 
 //console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
@@ -47,6 +47,7 @@ const calculateScore = string => {
 };
 
 const decrypt = hex => {
+
   let highest = {
     score:0,
     char:0,
@@ -54,6 +55,7 @@ const decrypt = hex => {
   };
   const START_ASCII = 0;
   const END_ASCII = 127;
+
   for(i = START_ASCII; i < END_ASCII; i++){
     //convert ascii to hex and make it same length as argument
     const singleByte = Buffer.from(i.toString(16).repeat(hex.length), 'hex');
@@ -68,8 +70,9 @@ const decrypt = hex => {
         string:xored
       }
     }
+
   }
   return highest;
 }
 
-//console.log(decrypt(CHALLENGE3_HEX));
+console.log(decrypt(CHALLENGE3_HEX));
