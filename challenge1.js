@@ -108,7 +108,7 @@ const decryptFile = filePath =>{
   return possibleSolution;
 }
 
-//console.log(decryptFile('./4.txt'));
+//console.log(decryptFile('./files/4.txt'));
 
 /*
   Challenge 5
