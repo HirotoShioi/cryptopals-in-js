@@ -1,4 +1,6 @@
 const fs = require('fs');
+const crypto = require('crypto');
+
 
 /* 
 * Challenge 1
@@ -139,6 +141,22 @@ const encryptWithKey = (text, key) => {
 
 const CHALLENGE7_KEY = "YELLOW SUBMARINE";
 
-const decryptFileWithAES = filePath => {
+const decryptFileWithAES = (filePath,key) => {
+  //read file
+  const c7data = fs.readFileSync(filePath).toString();
 
+  //decode base64, make buffer
+  const decode = Buffer.from(c7data,'base64');
+
+  //create decipher
+	const cipher = crypto.createDecipheriv("aes-128-ecb", new Buffer(key), '');
+  cipher.setAutoPadding(false);
+  
+  //decode
+	let buf = cipher.update(decode, 'base64');
+  buf = Buffer.concat([buf, cipher.final()]);
+  
+	return buf.toString('utf-8');
 };
+
+console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
