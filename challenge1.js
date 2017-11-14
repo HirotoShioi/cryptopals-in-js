@@ -115,7 +115,7 @@ const decryptFile = filePath =>{
 */
 
 const CHALLENGE5_TEXT1 = "Burning 'em, if you ain't quick and nimble I go crazy when I hear a cymbal";
-const KEY = "ICE";
+const CHALLENGE5_KEY = "ICE";
 
 function keyCharAt(key, i) {
   return key.charCodeAt( Math.floor(i % key.length) );
@@ -131,4 +131,14 @@ const encryptWithKey = (text, key) => {
   return Buffer.from(res).toString("hex");
 }
 
-//console.log(encryptWithKey(CHALLENGE5_TEXT1, KEY));
+//console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE_5_KEY));
+
+/*
+* Challenge 7
+*/
+
+const CHALLENGE7_KEY = "YELLOW SUBMARINE";
+
+const decryptFileWithAES = filePath => {
+
+};
