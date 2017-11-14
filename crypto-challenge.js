@@ -55,7 +55,7 @@ const decrypt = hex => {
   const START_ASCII = 0;
   const END_ASCII = 127;
   for(i = START_ASCII; i < END_ASCII; i++){
-    //convert ascii to hex and make it same length as
+    //convert ascii to hex and make it same length as argument
     const singleByte = Buffer.from(i.toString(16).repeat(hex.length), 'hex');
     //calculate the score
     const xored = xor(hex, singleByte);
@@ -72,4 +72,4 @@ const decrypt = hex => {
   return highest;
 }
 
-console.log(decrypt(hex4));
+//console.log(decrypt(hex4));
