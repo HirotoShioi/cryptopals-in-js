@@ -1,14 +1,14 @@
 // Challenge 1
-const hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+const CHALLENGE1_HEX = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
 const hexToBase64 = hex => {
   return new Buffer(hex, 'hex').toString('base64');
 }
-//console.log(hexToBase64(hex));
+//console.log(hexToBase64(CHALLENGE1_HEX));
 
 //Challenge 2
-const hex2 = "1c0111001f010100061a024b53535009181c";
-const hex3 = "686974207468652062756c6c277320657965";
+const CHALLENGE2_HEX1 = "1c0111001f010100061a024b53535009181c";
+const CHALLENGE2_HEX2 = "686974207468652062756c6c277320657965";
 
 const xor = (a, b) => {
   if (!Buffer.isBuffer(a)) a = new Buffer(a,"hex");
@@ -26,10 +26,10 @@ const xor = (a, b) => {
  return new Buffer(res).toString("utf-8");
 }
 
-//console.log(xor(hex2,hex3));
+//console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
 
 //Challenge 3
-const hex4 = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+const CHALLENGE3_HEX = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
 
 const calculateScore = string => {
   let score = 0;
@@ -72,4 +72,4 @@ const decrypt = hex => {
   return highest;
 }
 
-//console.log(decrypt(hex4));
+//console.log(decrypt(CHALLENGE3_HEX));
