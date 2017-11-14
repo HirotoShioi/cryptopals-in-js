@@ -1,3 +1,4 @@
+const fs = require('fs');
 // Challenge 1
 const CHALLENGE1_HEX = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
 
@@ -23,7 +24,7 @@ const xor = (a, b) => {
    res.push(a[i] ^ b[i])
    }
  }
- return Buffer.from(res).toString("utf-8");
+ return Buffer.from(res,"hex").toString("utf-8");
 }
 
 //console.log(xor(CHALLENGE2_HEX1,CHALLENGE2_HEX2));
@@ -75,4 +76,25 @@ const decrypt = hex => {
   return highest;
 }
 
-console.log(decrypt(CHALLENGE3_HEX));
+//console.log(decrypt(CHALLENGE3_HEX));
+
+//Challenge 4
+const decryptFile = filePath =>{
+  const fileContent = fs.readFileSync(filePath,'utf-8');
+  const fileContentAry = fileContent.split('\n');
+  let bestScore = 0;
+  let possibleSolution = {}
+
+  fileContentAry.forEach(hex => {
+    const decrypted = decrypt(hex);
+    if (bestScore  < decrypted.score) {
+      bestScore = decrypted.score;
+      possibleSolution = decrypted;
+    }
+  });
+
+  return possibleSolution;
+}
+
+console.log(decryptFile('./4.txt'));
+
