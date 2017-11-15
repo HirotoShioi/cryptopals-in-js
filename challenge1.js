@@ -140,6 +140,37 @@ const encryptWithKey = (text, key) => {
 //console.log(encryptWithKey(CHALLENGE5_TEXT1, CHALLENGE5_KEY));
 
 /*
+* Challenge6
+*/
+const CHALLENGE6_TEXT1 = "this is a test";
+const CHALLENGE6_TEXT2 = "wokka wokka!!!";
+
+//Done but too much mutation! Need refactoring
+const hammingDistance = (str1, str2) => {
+  let distance = 0;
+  const buf1 = Buffer.from(str1);
+  const buf2 = Buffer.from(str2);
+  for(i = 0; i < buf1.length; i++){
+    let buf1Ary = buf1[i].toString(2).split("");//0' on the front is being omitted
+    let buf2Ary = buf2[i].toString(2).split("");
+    //Add 0's shorter ones
+    if(buf1Ary.length != buf2Ary.length){
+      const lengthDiff = buf1Ary.length - buf2Ary.length;
+      const fill = Array(Math.abs(lengthDiff)).fill("0");
+      if(lengthDiff > 0) {
+        buf2Ary = [...fill,...buf2Ary];
+      } else {
+        buf1Ary = [...fill,...buf1Ary];
+      }
+    }
+    for(k = 0; k < buf1Ary.length; k++) {
+      if(buf1Ary[k] ^ buf2Ary[k] == 1) distance++;
+    }
+  }
+  return distance;
+}
+console.log(hammingDistance(CHALLENGE6_TEXT1,CHALLENGE6_TEXT2));
+/*
 * Challenge 7
 */
 
@@ -214,5 +245,6 @@ const detectAESinECB = filePath => {
   });
   return (possibleECBs.length == 1)? possibleECBs[0] : possibleECBs;
 }
-console.log("\n------ Challenge8 ------");
-console.log(detectAESinECB('./files/8.txt'));
+
+//console.log("\n------ Challenge8 ------");
+//console.log(detectAESinECB('./files/8.txt'));
