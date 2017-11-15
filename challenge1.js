@@ -169,7 +169,30 @@ const decryptFileWithAES = (filePath,key) => {
     Challenge 8
 */
 
-//It is done but need a lot of refactoring!!
+const compareBlocks = blocks => {
+  let sameBlockCnt = 0;
+
+  blocks.forEach((block, index) =>{
+    for(i = 0; i < blocks.length; i ++){
+      if(index == i) continue;
+      if (Buffer.compare(block, blocks[i]) == 0) {
+        sameBlockCnt++;
+      }
+    }
+  });
+
+  return sameBlockCnt;
+}
+
+const createBlocks = (cipherText, size) => {
+  let blocks = [];
+  const numOfBlocks = Math.ceil(cipherText.length / size);
+  for(i = 0; i < numOfBlocks; i++){
+    blocks.push(cipherText.slice(i*size, size*(i+1)));
+  }
+  return blocks;
+}
+
 const detectAESinECB = filePath => {
   const ciphers = fs.readFileSync(filePath,'utf-8');
   cipherArray = ciphers.split("\n").map(line => {
@@ -177,29 +200,16 @@ const detectAESinECB = filePath => {
   });
 
   const size = 16;
-  let sameBlockNumAry = []
-  cipherArray.forEach((cipher,textNum) => {
-    //16 文字ごとに分ける
-    let blocks = [];
-    const numOfBlocks = Math.ceil(cipher.length / size);
-    for(i = 0; i < numOfBlocks; i++){
-      blocks.push(cipher.slice(i*size, size*(i+1)));
-    }
+  let possibleECBs = [];
+  cipherArray.forEach((cipherText,lineNum) => {
+    //Split in to 16 bites
+    const blocks = createBlocks(cipherText, size);
 
-    //Blockごとに同じものがあるか検証する
-    let sameBlockNum = 0;
-    blocks.forEach((block, index) =>{
-      for(i = 0; i < blocks.length; i ++){
-        if(index == i) continue;
-        if (Buffer.compare(block, blocks[i]) == 0) {
-          sameBlockNum++;
-        }
-      }
-    });
-    if(sameBlockNum > 0) sameBlockNumAry.push({sameBlockNum:sameBlockNum, line:textNum, sentence:Buffer.from(cipher).toString()});
+    //Verify if there's any bsame blocks
+    const sameBlockCnt = compareBlocks(blocks);
+    if(sameBlockCnt > 0) possibleECBs.push({sameBlockCnt, lineNum, content: Buffer.from(cipherText).toString()});
   });
-  return sameBlockNumAry;
+  return (possibleECBs.length == 1)? possibleECBs[0] : possibleECBs;
 }
-
 console.log("\n------ Challenge8 ------");
 console.log(detectAESinECB('./files/8.txt'));
