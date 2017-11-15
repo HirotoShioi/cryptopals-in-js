@@ -153,22 +153,23 @@ const decryptFileWithAES = (filePath,key) => {
   const decode = Buffer.from(c7data,'base64');
 
   //create decipher
-	const cipher = crypto.createDecipheriv("aes-128-ecb", new Buffer(key), '');
-  cipher.setAutoPadding(false);
+	const decipher = crypto.createDecipheriv("aes-128-ecb", new Buffer(key), '');
   
   //decode
-	let buf = cipher.update(decode, 'base64');
-  buf = Buffer.concat([buf, cipher.final()]);
+	let buf = decipher.update(decode, 'base64');
+  buf = Buffer.concat([buf, decipher.final()]);
   
 	return buf.toString('utf-8');
 };
+
 //console.log("\n------ Challenge7 ------");
-// console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
+//console.log(decryptFileWithAES('./files/7.txt', CHALLENGE7_KEY));
 
 /*
     Challenge 8
 */
 
+// Compare each block, return number of same blocks
 const compareBlocks = blocks => {
   let sameBlockCnt = 0;
 
@@ -184,6 +185,7 @@ const compareBlocks = blocks => {
   return sameBlockCnt;
 }
 
+//Split given text into length of SIZE and return array
 const createBlocks = (cipherText, size) => {
   let blocks = [];
   const numOfBlocks = Math.ceil(cipherText.length / size);
@@ -193,6 +195,7 @@ const createBlocks = (cipherText, size) => {
   return blocks;
 }
 
+//Read the file and return possible ECB encrypted text
 const detectAESinECB = filePath => {
   const ciphers = fs.readFileSync(filePath,'utf-8');
   cipherArray = ciphers.split("\n").map(line => {
