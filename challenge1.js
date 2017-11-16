@@ -67,7 +67,6 @@ const decrypt = hex => {
   };
   const START_ASCII = 0;
   const END_ASCII = 127;
-
   for(i = START_ASCII; i < END_ASCII; i++){
     //convert ascii to hex and make it same length as argument
     const singleByte = Buffer.from(i.toString(16).repeat(hex.length), 'hex');
@@ -143,11 +142,11 @@ const encryptWithKey = (text, key) => {
 */
 
 //Split given text into length of SIZE and return array
-const createBlocks = (cipherText, size) => {
+const createBlocks = (ary, size) => {
   let blocks = [];
-  const numOfBlocks = Math.ceil(cipherText.length / size);
+  const numOfBlocks = Math.ceil(ary.length / size);
   for(i = 0; i < numOfBlocks; i++){
-    blocks.push(cipherText.slice(i*size, size*(i+1)));
+    blocks.push(ary.slice(i*size, size*(i+1)));
   }
   return blocks;
 }
@@ -182,19 +181,32 @@ const hammingDistance = (str1, str2) => {
   return distance;
 }
 
+//Not working properly because amount of verification is not enough
 const findKeysize = buffer => {
   const START_KEYSIZE = 2;
   const END_KEYSIZE = 40;
+  const NUM_OF_COMPARES = 20;
+
   let normalizedEditDistance = END_KEYSIZE;
   let possibleKeysize = START_KEYSIZE;
 
   for(i = START_KEYSIZE; i <= END_KEYSIZE; i++){
-    const firstBytes = buffer.slice(0,i);
-    const secondBytes = buffer.slice(i,2*i);
-    const distance = hammingDistance(firstBytes, secondBytes);
-    const currNormalizedEditDistance = distance / i;
-    if(normalizedEditDistance > currNormalizedEditDistance){
-      normalizedEditDistance = currNormalizedEditDistance;
+    let distanceAry = [];
+    for(let k = 0; k < NUM_OF_COMPARES; k++){
+      let firstByte = buffer.slice(i*k,i*(k+1));
+      let secondByte = buffer.slice(i*(k+1),i*(k+2));
+      let normalizedDistance = hammingDistance(firstByte,secondByte) / i;
+      distanceAry.push(normalizedDistance);
+    }
+
+    let sumDistance = distanceAry.reduce((prev, curr)=>{
+      return prev += curr;
+    },0);
+
+    const averageEditDistance = sumDistance / distanceAry.length;
+  
+    if(normalizedEditDistance > averageEditDistance){
+      normalizedEditDistance = averageEditDistance;
       possibleKeysize = i;
     }
   }
@@ -208,9 +220,26 @@ const decryptRepeatingKeyXOR = filePath => {
   //decode base64, make buffer
   const base64DecodedData = Buffer.from(encryptedFileContent,'base64');
 
+  //Find possible keysize
   const possibleKeysize = findKeysize(base64DecodedData);
 
-  
+  //Create blocks with the size length of keysize
+  let blocks = [];
+  blocks = createBlocks(base64DecodedData.toString("hex"), possibleKeysize);
+
+  //Transpose blocks
+  let transposedBlocks = [];
+  for(i = 0; i < blocks.length; i++){
+    for(k = 0; k < blocks[i].length; k++){
+      if(transposedBlocks[k] == undefined) transposedBlocks[k] = "";
+      transposedBlocks[k] = `${transposedBlocks[k]}${blocks[i][k]}`;
+    }
+  }
+
+  //Single-byte xor against each blocks
+  //console.log(transposedBlocks[0]);
+
+
 }
 
 decryptRepeatingKeyXOR('./files/6.txt');
