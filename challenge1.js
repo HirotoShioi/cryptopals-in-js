@@ -58,7 +58,7 @@ const calculateScore = string => {
   return score;
 };
 
-const decrypt = hex => {
+const decryptSingleXOR = hex => {
 
   let highest = {
     score:0,
@@ -86,7 +86,7 @@ const decrypt = hex => {
   return highest;
 }
 //console.log("\n------ Challenge3 ------");
-//console.log(decrypt(CHALLENGE3_HEX));
+//console.log(decryptSingleXOR(CHALLENGE3_HEX));
 
 /*
  Challenge 4
@@ -100,7 +100,7 @@ const decryptFile = filePath =>{
   let possibleSolution = {}
 
   fileContentAry.forEach(hex => {
-    const decrypted = decrypt(hex);
+    const decrypted = decryptSingleXOR(hex);
     if (bestScore  < decrypted.score) {
       bestScore = decrypted.score;
       possibleSolution = decrypted;
@@ -181,7 +181,6 @@ const hammingDistance = (str1, str2) => {
   return distance;
 }
 
-//Not working properly because amount of verification is not enough
 const findKeysize = buffer => {
   const START_KEYSIZE = 2;
   const END_KEYSIZE = 40;
@@ -225,24 +224,27 @@ const decryptRepeatingKeyXOR = filePath => {
 
   //Create blocks with the size length of keysize
   let blocks = [];
-  blocks = createBlocks(base64DecodedData.toString("hex"), possibleKeysize);
-
+  blocks = createBlocks(base64DecodedData, possibleKeysize);
   //Transpose blocks
+  let max = blocks[0].length;
   let transposedBlocks = [];
-  for(i = 0; i < blocks.length; i++){
-    for(k = 0; k < blocks[i].length; k++){
-      if(transposedBlocks[k] == undefined) transposedBlocks[k] = "";
-      transposedBlocks[k] = `${transposedBlocks[k]}${blocks[i][k]}`;
+  for(i = 0; i < max; i++){
+    let block = [];
+    for(k = 0; k < blocks.length; k++){
+      block.push(blocks[k][i]);
     }
+    transposedBlocks.push(Buffer.from(block));
   }
 
-  //Single-byte xor against each blocks
-  //console.log(transposedBlocks[0]);
+  let key = "";
+  transposedBlocks.forEach(block =>{
+    key += decryptSingleXOR(block).char;
+  });
 
-
+  return key;
 }
 
-decryptRepeatingKeyXOR('./files/6.txt');
+console.log(decryptRepeatingKeyXOR('./files/6.txt'));
 /*
 * Challenge 7
 */
