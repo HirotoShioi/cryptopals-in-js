@@ -1,7 +1,6 @@
 const fs = require('fs');
 const crypto = require('crypto');
 
-
 /* 
 * Challenge 1
 */
@@ -142,16 +141,28 @@ const encryptWithKey = (text, key) => {
 /*
 * Challenge6
 */
+
+//Split given text into length of SIZE and return array
+const createBlocks = (cipherText, size) => {
+  let blocks = [];
+  const numOfBlocks = Math.ceil(cipherText.length / size);
+  for(i = 0; i < numOfBlocks; i++){
+    blocks.push(cipherText.slice(i*size, size*(i+1)));
+  }
+  return blocks;
+}
+
 const CHALLENGE6_TEXT1 = "this is a test";
 const CHALLENGE6_TEXT2 = "wokka wokka!!!";
 
-//Done but too much mutation! Need refactoring
 const hammingDistance = (str1, str2) => {
+  if (str1.length != str2.length) return;
+
   let distance = 0;
   const buf1 = Buffer.from(str1);
   const buf2 = Buffer.from(str2);
   for(i = 0; i < buf1.length; i++){
-    let buf1Ary = buf1[i].toString(2).split("");//0' on the front is being omitted
+    let buf1Ary = buf1[i].toString(2).split("");//0's on the front is being omitted
     let buf2Ary = buf2[i].toString(2).split("");
     //Add 0's shorter ones
     if(buf1Ary.length != buf2Ary.length){
@@ -163,13 +174,46 @@ const hammingDistance = (str1, str2) => {
         buf1Ary = [...fill,...buf1Ary];
       }
     }
+    //XOR the bits, if 1, then add distance
     for(k = 0; k < buf1Ary.length; k++) {
       if(buf1Ary[k] ^ buf2Ary[k] == 1) distance++;
     }
   }
   return distance;
 }
-console.log(hammingDistance(CHALLENGE6_TEXT1,CHALLENGE6_TEXT2));
+
+const findKeysize = buffer => {
+  const START_KEYSIZE = 2;
+  const END_KEYSIZE = 40;
+  let normalizedEditDistance = END_KEYSIZE;
+  let possibleKeysize = START_KEYSIZE;
+
+  for(i = START_KEYSIZE; i <= END_KEYSIZE; i++){
+    const firstBytes = buffer.slice(0,i);
+    const secondBytes = buffer.slice(i,2*i);
+    const distance = hammingDistance(firstBytes, secondBytes);
+    const currNormalizedEditDistance = distance / i;
+    if(normalizedEditDistance > currNormalizedEditDistance){
+      normalizedEditDistance = currNormalizedEditDistance;
+      possibleKeysize = i;
+    }
+  }
+  return possibleKeysize;
+}
+
+const decryptRepeatingKeyXOR = filePath => {
+  //read file
+  const encryptedFileContent = fs.readFileSync(filePath).toString();
+  
+  //decode base64, make buffer
+  const base64DecodedData = Buffer.from(encryptedFileContent,'base64');
+
+  const possibleKeysize = findKeysize(base64DecodedData);
+
+  
+}
+
+decryptRepeatingKeyXOR('./files/6.txt');
 /*
 * Challenge 7
 */
@@ -215,17 +259,6 @@ const compareBlocks = blocks => {
 
   return sameBlockCnt;
 }
-
-//Split given text into length of SIZE and return array
-const createBlocks = (cipherText, size) => {
-  let blocks = [];
-  const numOfBlocks = Math.ceil(cipherText.length / size);
-  for(i = 0; i < numOfBlocks; i++){
-    blocks.push(cipherText.slice(i*size, size*(i+1)));
-  }
-  return blocks;
-}
-
 //Read the file and return possible ECB encrypted text
 const detectAESinECB = filePath => {
   const ciphers = fs.readFileSync(filePath,'utf-8');
