@@ -1,5 +1,5 @@
 const fs = require('fs');
-const createBlocks = require('../challenge6/challenge6').createBlocks;
+const createBlocks = require('../6/challenge6').createBlocks;
 /*
     Challenge 8
 */

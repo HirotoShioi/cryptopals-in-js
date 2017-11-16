@@ -1,5 +1,5 @@
 const fs = require('fs');
-const decryptSingleXOR = require('../challenge3/challenge3').decryptSingleXOR;
+const decryptSingleXOR = require('../3/challenge3').decryptSingleXOR;
 
 const decryptFile = filePath =>{
   const fileContent = fs.readFileSync(filePath,'utf-8');

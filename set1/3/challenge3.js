@@ -1,4 +1,4 @@
-const xor = require("../challenge2/challenge2").xor;
+const xor = require("../2/challenge2").xor;
 
 const calculateScore = string => {
   let score = 0;
